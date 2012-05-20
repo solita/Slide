@@ -9,10 +9,16 @@ jQuery slider/carousel thingie.
 
 Example usage with all the options:
 
-    $('#slides').Slide({
+    var carousel = $('#carousel');
+    
+    carousel.Slide({
         startIndex: 0,
         speed: 300,
         onSlideEnd: function() {
             // do something
         }
+    });
+    
+    $('#carousel-btn-1').click(function () {
+        carousel.slide(0);
     });
