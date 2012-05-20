@@ -7,6 +7,8 @@ jQuery slider/carousel thingie.
 - Automatically calculates the width of the slides and makes all the slides same size
 - **Note:** Fallbacks to scrolling if any of the slides is too big for the container
 
+Example usage with all the options:
+
     $('#slides').Slide({
         startIndex: 0,
         speed: 300,
