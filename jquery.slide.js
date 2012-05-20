@@ -1,28 +1,23 @@
-﻿/*!
- * jQuery Slide plugin - version 0.1
- * by Antti-Jussi Kovalainen (ajk@ajk.im)
- */
+﻿// jQuery Slide plugin - version 0.2
+// by Antti-Jussi Kovalainen (ajk@ajk.im)
 
 ;(function (window, undefined) {
 
     jQuery.fn.Slide = function (options_in) {
         return new Slide($(this), options_in);
-        //return this.each(function() {
-        //});
     };
     
-    function Slide(containerr, options_in) {
+    function Slide(container_in, options_in) {
+        
         var options = $.extend({
             startIndex: 0,
             speed: 300,
-            onSlideEnd: function() {
-            }
+            onSlideEnd: function() {}
         }, options_in);
 
         var activeIndex = options.startIndex;
-        var container = containerr; //$(this);
-        var list = $('#maps ul');
-        var listElements = $('#maps > ul > li');
+        var list = container.find('> ul');
+        var listElements = list.find('> li');
         var listItemWidth = 0;
         var containerTooSmall = false;
 
@@ -34,22 +29,32 @@
 
         container.imagesLoaded(function() {
             calcWidth();
-
-            listElements.css({
-                display: 'inline-block',
-                float: 'left'
-            });
+            resizeElements();
 
             listElements.show();
         });
 
         $(window).resize(function() {
             calcWidth();
+            resizeElements();
         });
 
+        function resizeElements() {
+            list.css({
+                width: parseInt(listElements.length * listItemWidth, 10)
+            });
+
+            listElements.css({
+                display: 'inline-block',
+                float: 'left',
+                width: listItemWidth
+            });
+
+            setCssTransforms(0, pos(activeIndex));
+        }
 
         function pos(index) {
-            return parseInt(listItemWidth * index);
+            return parseInt(listItemWidth * index, 10);
         }
 
         function setCssTransforms(duration, translation) {
@@ -123,18 +128,6 @@
             }
 
             listItemWidth = minWidth;
-
-            list.css({
-                width: parseInt(listElements.length * listItemWidth)
-            });
-
-            listElements.css({
-                display: 'inline-block',
-                float: 'left',
-                width: listItemWidth
-            });
-
-            setCssTransforms(0, pos(activeIndex));
 
             if (callback !== undefined) {
                 callback();
