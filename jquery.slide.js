@@ -1,4 +1,4 @@
-﻿// jQuery Slide plugin - version 0.2
+// jQuery Slide plugin - version 0.3
 // by Antti-Jussi Kovalainen (ajk@ajk.im)
 
 ;(function (window, undefined) {
@@ -6,20 +6,22 @@
     jQuery.fn.Slide = function (options_in) {
         return new Slide($(this), options_in);
     };
-    
-    function Slide(container_in, options_in) {
-        
+
+    function Slide(container, options_in) {
+
         var options = $.extend({
             startIndex: 0,
             speed: 300,
-            onSlideEnd: function() {}
+            onSlideEnd: function(index, elem) {}
         }, options_in);
 
         var activeIndex = options.startIndex;
         var list = container.find('> ul');
         var listElements = list.find('> li');
+        var maxIndex = listElements.length;
         var listItemWidth = 0;
         var containerTooSmall = false;
+        var marginTimeout = null;
 
         container.css({
             overflow: 'hidden'
@@ -38,6 +40,7 @@
             calcWidth();
             resizeElements();
         });
+
 
         function resizeElements() {
             list.css({
@@ -65,7 +68,7 @@
                 container.scrollLeft(0);
             }
 
-            if (Modernizr.csstransforms3d || Modernizr.csstransforms) {
+            if ((Modernizr.csstransforms3d || Modernizr.csstransforms) && Modernizr.csstransitions) {
                 var transform = 'translate(-' + translation + 'px, 0px)';
 
                 if (Modernizr.csstransforms3d) {
@@ -86,14 +89,16 @@
 
                 list.unbind('webkitTransitionEnd mozTransitionEnd MSTransitionEnd oTransitionEnd transitionEnd')
                       .bind('webkitTransitionEnd mozTransitionEnd MSTransitionEnd oTransitionEnd transitionEnd', function() {
-                        options.onSlideEnd();
+                        options.onSlideEnd(activeIndex, listElements.get(activeIndex));
                     });
 
             } else {
-                list.css('margin-left', -translation + 'px');
+                //list.css('margin-left', -translation + 'px');
+                list.stop().animate({ marginLeft: -translation }, duration);
 
-                setTimeout(function() {
-                    options.onSlideEnd();
+                clearTimeout(marginTimeout);
+                marginTimeout = setTimeout(function() {
+                    options.onSlideEnd(activeIndex, listElements.get(activeIndex));
                 }, duration);
             }
         }
@@ -136,12 +141,29 @@
 
         // public methods:
 
-        function slide(index) {
+        this.slide = function (index) {
             activeIndex = index;
             setCssTransforms(options.speed, pos(index));
-        }
+        };
 
-        this.slide = slide;
+        this.getPos = function () {
+            return activeIndex;
+        };
+
+        this.next = function () {
+            if (activeIndex < maxIndex) {
+                this.slide(activeIndex + 1);
+            }
+        };
+
+        this.prev = function () {
+            if (activeIndex > 0) {
+                this.slide(activeIndex - 1);
+            }
+        };
+
     }
+
+    window.Slide = window.Slide || Slide;
 
 })(window);
