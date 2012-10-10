@@ -1,9 +1,8 @@
-// jQuery Slide plugin - version 0.3
+// jQuery Slide - version 0.3
 // by Antti-Jussi Kovalainen (ajk@ajk.im)
 
 ;(function (window, undefined) {
-
-    jQuery.fn.Slide = function (options_in) {
+     jQuery.fn.Slide = function (options_in) {
         return new Slide($(this), options_in);
     };
 
