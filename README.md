@@ -22,3 +22,8 @@ Example usage with all the options:
     $('#carousel-btn-1').click(function () {
         carousel.slide(0);
     });
+
+
+## License
+
+MIT License
